@@ -1,4 +1,4 @@
-.nvmrc
 dist
+coverage/
 node_modules
 .env
