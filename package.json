@@ -9,8 +9,8 @@
     "dev": "npx tsc && node dist/index.js",
     "lint": "eslint .",
     "test": "vitest --run",
-    "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
