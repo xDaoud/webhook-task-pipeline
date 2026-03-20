@@ -8,6 +8,13 @@
       "when": 1773954135867,
       "tag": "0000_rare_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774035327914,
+      "tag": "0001_old_talon",
+      "breakpoints": true
     }
   ]
 }

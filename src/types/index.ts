@@ -27,6 +27,7 @@ export interface Job {
   result: Record<string, unknown> | null;
   status: JobStatus;
   attemptCount: number;
+  maxAttempts: number;
   error: string | null;
   createdAt: Date;
   processedAt: Date | null;
