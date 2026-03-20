@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, jsonb, integer, timestamp, pgEnum, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, jsonb, integer, timestamp, pgEnum, index, unique } from 'drizzle-orm/pg-core';
 
 export const jobStatusEnum = pgEnum('job_status', ['pending', 'processing', 'completed', 'failed']);
 export const deliveryStatusEnum = pgEnum('delivery_status', ['pending', 'success', 'failed', 'dead']);
@@ -20,7 +20,9 @@ export const subscribers = pgTable('subscribers', {
   pipelineId: uuid('pipeline_id').notNull().references(() => pipelines.id, { onDelete: 'cascade' }),
   url: text('url').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+}, (t) => [
+  unique('subscribers_pipeline_id_url_unique').on(t.pipelineId, t.url),
+]);
 
 export const jobs = pgTable('jobs', {
   id: uuid('id').primaryKey().defaultRandom(),

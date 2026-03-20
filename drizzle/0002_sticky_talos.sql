@@ -1,0 +1,1 @@
+ALTER TABLE "subscribers" ADD CONSTRAINT "subscribers_pipeline_id_url_unique" UNIQUE("pipeline_id","url");

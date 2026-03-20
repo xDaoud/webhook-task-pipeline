@@ -15,6 +15,13 @@
       "when": 1774035327914,
       "tag": "0001_old_talon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774043939978,
+      "tag": "0002_sticky_talos",
+      "breakpoints": true
     }
   ]
 }
