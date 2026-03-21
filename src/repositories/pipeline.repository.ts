@@ -12,7 +12,7 @@ export async function insertPipeline(data: {
     return result[0];
 }
 
-export async function findPipelineById(id: string) {
+export async function findPipelineById(id: string): Promise<typeof pipelines.$inferSelect | null> {
   const result = await db.select().from(pipelines).where(eq(pipelines.id, id));
   return result[0] ?? null;
 }
