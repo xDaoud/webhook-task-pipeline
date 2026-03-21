@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig } from '../types';
 import { findAllPipelines, insertPipeline } from '../repositories/pipeline.repository';
-import { findSubscribersByPipelineId, insertSubscribers } from '../repositories/subscriber.repository';
+import { findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({
@@ -25,16 +25,15 @@ export async function createPipeline(body: CreatePipelineBody): Promise<Pipeline
 
 export async function getAllPipelines(): Promise<PipelineWithSubscribers[]> {
   const allPipelines = await findAllPipelines();
-  const pipelinesWithSubscribers = await Promise.all(
-    allPipelines.map(async (pipeline) => {
-      const pipelineSubscribers = await findSubscribersByPipelineId(pipeline.id);
-      return {
+
+  if(allPipelines.length === 0) return [];
+
+  const pipelineIds = allPipelines.map((p) => p.id);
+  const allSubscribers = await findSubscribersByPipelineIds(pipelineIds);
+  return allPipelines.map((pipeline) => ({
         ...pipeline,
         actionType: pipeline.actionType as ActionType,
         actionConfig: pipeline.actionConfig as ActionConfig,
-        subscribers: pipelineSubscribers,
-      };
-    })
-  );
-  return pipelinesWithSubscribers;
+        subscribers: allSubscribers.filter((s) => pipeline.id === s.pipelineId),
+    }));
 }
