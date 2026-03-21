@@ -49,14 +49,17 @@ export type ActionType = 'filter' | 'transform' | 'enrich';
 
 export interface FilterConfig {
   keepFields: string[];
+  [key: string]: unknown;
 }
 
 export interface TransformConfig {
   rename: Record<string, string>;
+  [key: string]: unknown;
 }
 
 export interface EnrichConfig {
   addFields: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export type ActionConfig = FilterConfig | TransformConfig | EnrichConfig;
