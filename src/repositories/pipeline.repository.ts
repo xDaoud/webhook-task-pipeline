@@ -16,3 +16,7 @@ export async function findPipelineById(id: string) {
   const result = await db.select().from(pipelines).where(eq(pipelines.id, id));
   return result[0] ?? null;
 }
+
+export async function findAllPipelines() {
+    return db.select().from(pipelines);
+}

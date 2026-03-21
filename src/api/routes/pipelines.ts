@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createPipeline } from 'src/services/pipeline.service';
+import { createPipeline, getAllPipelines } from 'src/services/pipeline.service';
 import { CreatePipelineBody } from 'src/types';
 
 const router = Router();
@@ -17,6 +17,10 @@ router.post('/', async (req: Request, res: Response) => {
   res.status(201).json(pipeline);
 });
 // GET    /pipelines
+router.get('/', async (_req: Request, res: Response) => {
+  const allPipelines = await getAllPipelines();
+  res.status(200).json(allPipelines);
+});
 // GET    /pipelines/:id
 // PATCH  /pipelines/:id
 // DELETE /pipelines/:id
