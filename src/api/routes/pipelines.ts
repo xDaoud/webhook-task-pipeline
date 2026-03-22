@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { findPipelineById } from 'src/repositories/pipeline.repository';
-import { createPipeline, getAllPipelines, updatePipeline } from 'src/services/pipeline.service';
+import { createPipeline, deletePipeline, getAllPipelines, updatePipeline } from 'src/services/pipeline.service';
 import { CreatePipelineBody, UpdatePipelineBody } from 'src/types';
 
 const router = Router();
@@ -32,7 +32,7 @@ router.get('/:id', async (req: Request<{id : string}>, res: Response) => {
   res.status(200).json(pipeline);
 });
 // PATCH  /pipelines/:id
-router.patch('/:id', async(req: Request<{ id: string }>, res: Response) => {
+router.patch('/:id', async (req: Request<{ id: string }>, res: Response) => {
   const body: UpdatePipelineBody = req.body;
   const pipeline = await updatePipeline(req.params.id, body);
 
@@ -44,5 +44,15 @@ router.patch('/:id', async(req: Request<{ id: string }>, res: Response) => {
   res.status(200).json(pipeline);
 });
 // DELETE /pipelines/:id
+router.delete('/:id', async (req: Request<{ id: string }>, res: Response) => {
+  const deleted = await deletePipeline(req.params.id);
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Pipeline not found' });
+    return;
+  }
+
+  res.status(204).send();
+});
 
 export default router;

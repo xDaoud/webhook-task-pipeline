@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, UpdatePipelineBody } from '../types';
-import { findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository';
+import { deletePipelineById, findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository';
 import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
@@ -78,4 +78,8 @@ export async function updatePipeline(id: string, body: UpdatePipelineBody) {
     actionConfig: body.actionConfig as ActionConfig,
     subscribers: pipelineSubscribers,
   }
+}
+
+export async function deletePipeline(id: string): Promise<boolean> {
+  return deletePipelineById(id);
 }

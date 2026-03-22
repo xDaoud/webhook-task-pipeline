@@ -35,3 +35,8 @@ export async function updatePipelineById(id: string, data: Partial<{
 
     return result[0] ?? null;
 }
+
+export async function deletePipelineById(id: string) {
+  const result = await db.delete(pipelines).where(eq(pipelines.id, id)).returning();
+  return result.length > 0;
+}
