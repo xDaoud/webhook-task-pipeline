@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service";
+import { createPipeline, deletePipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service";
 import * as pipelineRepo from "../repositories/pipeline.repository";
 import * as subscriberRepo from "../repositories/subscriber.repository";
 
@@ -257,5 +257,34 @@ describe("updatePipeline", () => {
     const result = await updatePipeline("pipeline-123", { name: "new name" });
 
     expect(result).toBeNull();
+  });
+});
+
+describe("deletePipeline", () => {
+  const mockPipeline = {
+    id: "pipeline-123",
+    name: "Test Pipeline",
+    sourceId: "some-uuid",
+    actionType: "filter",
+    actionConfig: { keepFields: ["name"] },
+    status: "active" as "active" | "paused",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  it("should return false if pipeline does not exist", async () => {
+  vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(false);
+
+  const result = await deletePipeline("non-existent");
+
+  expect(result).toBe(false);
+  });
+
+  it("should return true if pipeline does exist", async () => {
+  vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(true);
+
+  const result = await deletePipeline(mockPipeline.id);
+
+  expect(result).toBe(true);
   });
 });
