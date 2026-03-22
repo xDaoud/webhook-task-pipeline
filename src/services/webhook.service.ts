@@ -1,6 +1,6 @@
-import { insertJob } from "../repositories/job.repository";
-import { findPipelineBySourceId } from "../repositories/pipeline.repository";
-import { Job } from "../types";
+import { insertJob } from "../repositories/job.repository.js";
+import { findPipelineBySourceId } from "../repositories/pipeline.repository.js";
+import { Job } from "../types/index.js";
 
 export async function ingestWebhook(
   sourceId: string,

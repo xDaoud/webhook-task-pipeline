@@ -1,5 +1,5 @@
-import { db } from '../db/client';
-import { subscribers } from '../db/schema';
+import { db } from '../db/client.js';
+import { subscribers } from '../db/schema.js';
 import { eq, inArray } from 'drizzle-orm';
 
 export async function insertSubscribers(data: { pipelineId: string; url: string }[]) {

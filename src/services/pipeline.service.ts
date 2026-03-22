@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, UpdatePipelineBody } from '../types';
-import { deletePipelineById, findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository';
-import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository';
+import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, UpdatePipelineBody } from '../types/index.js';
+import { deletePipelineById, findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository.js';
+import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository.js';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getJobById, getJobDeliveries } from "./job.service";
-import * as jobRepo from "../repositories/job.repository";
-import * as deliveryRepo from "../repositories/delivery.repository";
-import { Delivery, JobStatus } from "../types";
+import { getJobById, getJobDeliveries } from "./job.service.js";
+import * as jobRepo from "../repositories/job.repository.js";
+import * as deliveryRepo from "../repositories/delivery.repository.js";
+import { Delivery, JobStatus } from "../types/index.js";
 
 
 vi.mock("../repositories/job.repository");

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPipeline, deletePipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service";
-import * as pipelineRepo from "../repositories/pipeline.repository";
-import * as subscriberRepo from "../repositories/subscriber.repository";
+import { createPipeline, deletePipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service.js";
+import * as pipelineRepo from "../repositories/pipeline.repository.js";
+import * as subscriberRepo from "../repositories/subscriber.repository.js";
 
 vi.mock("../repositories/pipeline.repository");
 vi.mock("../repositories/subscriber.repository");

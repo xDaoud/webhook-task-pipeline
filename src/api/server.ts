@@ -1,8 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import pipelinesRouter from './routes/pipelines';
-import webhooksRouter from './routes/webhooks';
-import jobsRouter from './routes/jobs';
+import pipelinesRouter from './routes/pipelines.js';
+import webhooksRouter from './routes/webhooks.js';
+import jobsRouter from './routes/jobs.js';
 
 dotenv.config();
 

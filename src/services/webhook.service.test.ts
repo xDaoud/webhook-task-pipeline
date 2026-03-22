@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ingestWebhook } from "./webhook.service"
-import * as pipelineRepo from "../repositories/pipeline.repository";
-import * as jobRepo from "../repositories/job.repository";
-import { JobStatus } from "../types";
+import { ingestWebhook } from "./webhook.service.js"
+import * as pipelineRepo from "../repositories/pipeline.repository.js";
+import * as jobRepo from "../repositories/job.repository.js";
+import { JobStatus } from "../types/index.js";
 
 vi.mock("../repositories/pipeline.repository");
 vi.mock("../repositories/job.repository");

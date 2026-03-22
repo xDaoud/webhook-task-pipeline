@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { findPipelineById } from 'src/repositories/pipeline.repository';
-import { createPipeline, deletePipeline, getAllPipelines, updatePipeline } from 'src/services/pipeline.service';
-import { CreatePipelineBody, UpdatePipelineBody } from 'src/types';
+import { findPipelineById } from '../../repositories/pipeline.repository.js';
+import { createPipeline, deletePipeline, getAllPipelines, updatePipeline } from '../../services/pipeline.service.js';
+import { CreatePipelineBody, UpdatePipelineBody } from '../../types/index.js';
 
 const router = Router();
 

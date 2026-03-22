@@ -1,6 +1,6 @@
-import { findDeliveriesByJobId } from "../repositories/delivery.repository";
-import { findJobById } from "../repositories/job.repository";
-import { Delivery, Job } from "../types";
+import { findDeliveriesByJobId } from "../repositories/delivery.repository.js";
+import { findJobById } from "../repositories/job.repository.js";
+import { Delivery, Job } from "../types/index.js";
 
 export async function getJobById(id: string): Promise<Job | null> {
   const job = await findJobById(id);
