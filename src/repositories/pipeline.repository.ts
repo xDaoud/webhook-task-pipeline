@@ -40,3 +40,8 @@ export async function deletePipelineById(id: string) {
   const result = await db.delete(pipelines).where(eq(pipelines.id, id)).returning();
   return result.length > 0;
 }
+
+export async function findPipelineBySourceId(sourceId: string): Promise<typeof pipelines.$inferSelect | null> {
+    const result = await db.select().from(pipelines).where(eq(pipelines.sourceId, sourceId));
+    return result[0] ?? null;
+}
