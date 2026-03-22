@@ -20,3 +20,18 @@ export async function findPipelineById(id: string): Promise<typeof pipelines.$in
 export async function findAllPipelines() {
     return db.select().from(pipelines);
 }
+
+export async function updatePipelineById(id: string, data: Partial<{
+    name: string;
+    actionType: string;
+    actionConfig: Record<string, unknown>;
+    status: 'active' | 'paused';
+    updatedAt: Date;
+}>) {
+    const result = await db.update(pipelines)
+    .set(data)
+    .where(eq(pipelines.id, id))
+    .returning();
+
+    return result[0] ?? null;
+}

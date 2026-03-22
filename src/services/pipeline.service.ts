@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig } from '../types';
-import { findAllPipelines, findPipelineById, insertPipeline } from '../repositories/pipeline.repository';
-import { findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository';
+import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, UpdatePipelineBody } from '../types';
+import { findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository';
+import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({
@@ -49,4 +49,33 @@ export async function getPipelineById(id: string): Promise<PipelineWithSubscribe
     actionConfig: pipeline.actionConfig as ActionConfig,
     subscribers: subscribers,
   };
+}
+
+export async function updatePipeline(id: string, body: UpdatePipelineBody) {
+  const existing = await findPipelineById(id);
+  if(!existing) return null;
+
+  const updated = await updatePipelineById(id, {
+    ...(body.name && { name: body.name}),
+    ...(body.actionType && {actionType: body.actionType}),
+    ...(body.actionConfig && {actionConfig: body.actionConfig as Record<string, unknown>}),
+    ...(body.status && {status: body.status}),
+    updatedAt: new Date(),
+  });
+
+  if(!updated) return null;
+
+  if(body.subscribers){
+    await deleteSubscriberByPipelineId(id);
+    await insertSubscribers(body.subscribers.map((url) => ({pipelineId: id, url})));
+  }
+
+  const pipelineSubscribers = await findSubscribersByPipelineIds([id]);
+
+  return{
+    ...updated,
+    actionType: body.actionType as ActionType,
+    actionConfig: body.actionConfig as ActionConfig,
+    subscribers: pipelineSubscribers,
+  }
 }

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { findPipelineById } from 'src/repositories/pipeline.repository';
-import { createPipeline, getAllPipelines } from 'src/services/pipeline.service';
-import { CreatePipelineBody } from 'src/types';
+import { createPipeline, getAllPipelines, updatePipeline } from 'src/services/pipeline.service';
+import { CreatePipelineBody, UpdatePipelineBody } from 'src/types';
 
 const router = Router();
 
@@ -32,6 +32,17 @@ router.get('/:id', async (req: Request<{id : string}>, res: Response) => {
   res.status(200).json(pipeline);
 });
 // PATCH  /pipelines/:id
+router.patch('/:id', async(req: Request<{ id: string }>, res: Response) => {
+  const body: UpdatePipelineBody = req.body;
+  const pipeline = await updatePipeline(req.params.id, body);
+
+  if(!pipeline){
+    res.status(404).json({ error: 'Pipeline not found'});
+    return;
+  }
+
+  res.status(200).json(pipeline);
+});
 // DELETE /pipelines/:id
 
 export default router;
