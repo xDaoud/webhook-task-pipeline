@@ -10,7 +10,7 @@ export async function insertJob(data: {
     return result[0];
 }
 
-export async function findJobById(id: string) {
+export async function findJobById(id: string): Promise<typeof jobs.$inferSelect | null> {
     const result = await db.select().from(jobs).where(eq(jobs.id, id));
     return result[0] ?? null;
 }
