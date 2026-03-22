@@ -1,5 +1,5 @@
-import { db } from "src/db/client";
-import { jobs } from "src/db/schema";
+import { db } from "../db/client";
+import { jobs } from "../db/schema";
 
 export async function insertJob(data: {
     pipelineId: string;

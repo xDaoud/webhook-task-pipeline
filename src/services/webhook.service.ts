@@ -1,11 +1,11 @@
-import { insertJob } from "src/repositories/job.repository";
-import { findPipelineBySourceId } from "src/repositories/pipeline.repository";
-import { Job } from "src/types";
+import { insertJob } from "../repositories/job.repository";
+import { findPipelineBySourceId } from "../repositories/pipeline.repository";
+import { Job } from "../types";
 
 export async function ingestWebhook(
   sourceId: string,
   payload: Record<string, unknown>,
-) {
+): Promise<Job> {
   const pipeline = await findPipelineBySourceId(sourceId);
 
   if (!pipeline) {
