@@ -63,3 +63,6 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
+      
+      - name: Build Docker images
+        run: docker compose build
