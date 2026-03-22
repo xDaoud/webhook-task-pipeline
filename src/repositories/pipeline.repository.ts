@@ -27,7 +27,7 @@ export async function updatePipelineById(id: string, data: Partial<{
     actionConfig: Record<string, unknown>;
     status: 'active' | 'paused';
     updatedAt: Date;
-}>) {
+}>): Promise<typeof pipelines.$inferSelect | null> {
     const result = await db.update(pipelines)
     .set(data)
     .where(eq(pipelines.id, id))

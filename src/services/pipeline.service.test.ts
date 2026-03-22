@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPipeline, getAllPipelines, getPipelineById } from "./pipeline.service";
+import { createPipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service";
 import * as pipelineRepo from "../repositories/pipeline.repository";
 import * as subscriberRepo from "../repositories/subscriber.repository";
 
@@ -191,6 +191,71 @@ describe("getPipelineById", () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
 
     const result = await getPipelineById("non-existent-id");
+    expect(result).toBeNull();
+  });
+});
+
+describe("updatePipeline", () => {
+  const mockPipeline = {
+    id: "pipeline-123",
+    name: "Test Pipeline",
+    sourceId: "some-uuid",
+    actionType: "filter",
+    actionConfig: { keepFields: ["name"] },
+    status: "active" as "active" | "paused",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const mockInsertSubscribers = [
+    {
+      id: "sub-2",
+      pipelineId: "pipeline-123",
+      url: "https://example.com/newSub",
+      createdAt: new Date(),
+    },
+  ];
+
+  const mockUpdatePipeline = {
+    id: "pipeline-123",
+    name: "new name", //updated
+    sourceId: "some-uuid",
+    actionType: "filter",
+    actionConfig: { keepFields: ["name"] },
+    status: "active" as "active" | "paused",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  it("should return an updated pipeline with subscribers and update the subscribers", async () => {
+    vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
+    vi.spyOn(subscriberRepo, "findSubscribersByPipelineIds").mockResolvedValue(mockInsertSubscribers);
+    vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(mockUpdatePipeline);
+    vi.spyOn(subscriberRepo, "deleteSubscriberByPipelineId").mockResolvedValue(undefined);
+    vi.spyOn(subscriberRepo, "insertSubscribers").mockResolvedValue(mockInsertSubscribers);
+    const result = await updatePipeline("pipeline-123", {
+      name: mockUpdatePipeline.name,
+      subscribers: [mockInsertSubscribers[0].url],
+    });
+    expect(result?.name).toBe("new name");
+    expect(result?.subscribers).toHaveLength(1);
+    expect(result?.subscribers[0].url).toBe("https://example.com/newSub");
+  });
+
+  it("should return null if pipeline does not exist", async () => {
+  vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
+
+  const result = await updatePipeline("non-existent-id", { name: "new name" });
+
+  expect(result).toBeNull();
+});
+
+  it("should return null if update fails", async () => {
+    vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
+    vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(null);
+
+    const result = await updatePipeline("pipeline-123", { name: "new name" });
+
     expect(result).toBeNull();
   });
 });
