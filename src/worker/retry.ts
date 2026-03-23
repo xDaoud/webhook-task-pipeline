@@ -10,7 +10,7 @@ export async function processFailedDeliveries() {
   const dueDeliveries = await findDeliveriesDueForRetry();
 
   for(const delivery of dueDeliveries) {
-    retryDelivery(delivery);
+    await retryDelivery(delivery);
   }
 }
 
@@ -24,7 +24,7 @@ async function retryDelivery(delivery: {
   if(!job) return;
 
   const subscriber = await findSubscribersByIds([delivery.subscriberId]);
-  if(!subscriber) return;
+  if(!subscriber?.length) return;
 
   const result = job.result as Record<string, unknown>;
   if(!result) return;
