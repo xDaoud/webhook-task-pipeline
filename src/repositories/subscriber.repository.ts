@@ -14,3 +14,7 @@ export async function findSubscribersByPipelineIds(pipelineIds: string[]) {
 export async function deleteSubscriberByPipelineId(pipelineId: string): Promise<void> {
   await db.delete(subscribers).where(eq(subscribers.pipelineId, pipelineId));
 }
+
+export async function findSubscribersByIds(ids: string[]) {
+  return db.select().from(subscribers).where(inArray(subscribers.id, ids));
+}

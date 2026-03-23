@@ -5,7 +5,7 @@ export { handleFailedDelivery }
 
 const MAX_ATTEMPTS = 5;
 
-function getBackoffDelay(attemptNumber: number): Date {
+export function getBackoffDelay(attemptNumber: number): Date {
   const delays = [1, 5, 30, 60, 180]; //minutes
   const minutes = delays[attemptNumber - 1] ?? 180;
   const nextRetryAt = new Date();
