@@ -28,7 +28,22 @@ export async function claimNextJob(): Promise<typeof jobs.$inferSelect | null> {
         )
         RETURNING *
     `);
-    return (result.rows[0] as typeof jobs.$inferSelect) ?? null;
+    const row = result.rows[0];
+    if(!row) return null;
+
+    return {
+    id: row.id,
+    pipelineId: row.pipeline_id,
+    payload: row.payload,
+    result: row.result,
+    status: row.status,
+    attemptCount: row.attempt_count,
+    maxAttempts: row.max_attempts,
+    error: row.error,
+    createdAt: row.created_at,
+    processedAt: row.processed_at,
+  } as typeof jobs.$inferSelect;
+
 }
 
 export async function markJobFailed(id: string, error: string) {
