@@ -17,7 +17,7 @@ export async function findJobById(id: string): Promise<typeof jobs.$inferSelect 
 
 export async function claimNextJob(): Promise<typeof jobs.$inferSelect | null> {
     const result = await db.execute(sql`
-        Update jobs
+        UPDATE jobs
         SET status = 'processing', attempt_count = attempt_count + 1
         WHERE id = (
             SELECT id FROM jobs

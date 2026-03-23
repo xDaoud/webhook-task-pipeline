@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import pipelinesRouter from './routes/pipelines.js';
 import webhooksRouter from './routes/webhooks.js';
 import jobsRouter from './routes/jobs.js';
+import { connectWithRetry } from '../db/client.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get('/health', (_req, res) => {
 
 const PORT = Number(process.env.PORT) || 3000;
 
+await connectWithRetry();
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

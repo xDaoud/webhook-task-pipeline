@@ -1,4 +1,4 @@
-import { db } from "../db/client.js";
+import { connectWithRetry, db } from "../db/client.js";
 import { processNextJob } from "./processor.js";
 
 const POLL_INTERNAL_MS = 5000;
@@ -7,6 +7,7 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));  
 }
 
+await connectWithRetry();
 async function startWorker() {
   console.log('Worker starting...');
 
@@ -18,9 +19,8 @@ async function startWorker() {
         await sleep(POLL_INTERNAL_MS);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`Worker error: ${message}`);
-      await sleep(POLL_INTERNAL_MS);
+    console.error('Worker error:', error); // log the full error object, not just message
+    await sleep(POLL_INTERNAL_MS);
     }
   }
 }
