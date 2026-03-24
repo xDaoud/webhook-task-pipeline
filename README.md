@@ -191,6 +191,9 @@ Delivery statuses: `pending` → `success` | `failed` → `dead`
 
 ### System overview
 
+![Architecture](docs/architecture.svg)
+
+
 ```
 External service
       ↓
