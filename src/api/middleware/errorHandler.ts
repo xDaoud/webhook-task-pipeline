@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppError, ConflictError, NotFoundError, ValidationError } from './errors.js';
+import { AppError, ConflictError, NotFoundError, UnauthorizedError, ValidationError } from './errors.js';
 
 
 export function errorHandler(
@@ -13,7 +13,8 @@ export function errorHandler(
 
   if (error instanceof NotFoundError ||
       error instanceof ConflictError ||
-      error instanceof ValidationError) {
+      error instanceof ValidationError ||
+      error instanceof UnauthorizedError) {
     res.status((error as AppError).statusCode).json({ error: error.message });
     return;
   }
