@@ -208,6 +208,7 @@ Delivery statuses: `pending` → `success` | `failed` → `dead`
 ### System overview
 
 ![Architecture](docs/architecture.svg)
+![Flow](docs/flow.svg)
 
 
 ```
