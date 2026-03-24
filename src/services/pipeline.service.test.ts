@@ -187,11 +187,10 @@ describe("getPipelineById", () => {
     expect(result?.subscribers[0].url).toBe("https://example.com/webhook");
   });
 
-  it("should return null if the pipeline is not found", async () => {
+  it("should throw NotFoundError if the pipeline is not found", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
 
-    const result = await getPipelineById("non-existent-id");
-    expect(result).toBeNull();
+    await expect(getPipelineById("non-existent-id")).rejects.toThrow("PIPELINE_NOT_FOUND");
   });
 });
 
@@ -242,21 +241,17 @@ describe("updatePipeline", () => {
     expect(result?.subscribers[0].url).toBe("https://example.com/newSub");
   });
 
-  it("should return null if pipeline does not exist", async () => {
+  it("should throw NotFoundError if pipeline does not exist", async () => {
   vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
 
-  const result = await updatePipeline("non-existent-id", { name: "new name" });
-
-  expect(result).toBeNull();
+  await expect(updatePipeline("non-existent-id", { name: "new name" })).rejects.toThrow("PIPELINE_NOT_FOUND");
 });
 
-  it("should return null if update fails", async () => {
+  it("should throw if update fails", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
     vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(null);
 
-    const result = await updatePipeline("pipeline-123", { name: "new name" });
-
-    expect(result).toBeNull();
+    await expect(updatePipeline("pipeline-123", { name: "new name" })).rejects.toThrow("UPDATE_FAILED");
   });
 });
 

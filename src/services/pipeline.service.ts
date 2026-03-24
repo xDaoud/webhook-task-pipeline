@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, UpdatePipelineBody } from '../types/index.js';
 import { deletePipelineById, findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository.js';
 import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository.js';
+import { NotFoundError } from '../api/middleware/errors.js';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({
@@ -38,9 +39,9 @@ export async function getAllPipelines(): Promise<PipelineWithSubscribers[]> {
     }));
 }
 
-export async function getPipelineById(id: string): Promise<PipelineWithSubscribers | null> {
+export async function getPipelineById(id: string): Promise<PipelineWithSubscribers> {
   const pipeline = await findPipelineById(id);
-  if(!pipeline) return null;
+  if(!pipeline) throw new NotFoundError("PIPELINE_NOT_FOUND");
   const subscribers = await findSubscribersByPipelineIds([pipeline.id]);
 
   return {
@@ -53,7 +54,7 @@ export async function getPipelineById(id: string): Promise<PipelineWithSubscribe
 
 export async function updatePipeline(id: string, body: UpdatePipelineBody) {
   const existing = await findPipelineById(id);
-  if(!existing) return null;
+  if(!existing) throw new NotFoundError("PIPELINE_NOT_FOUND");
 
   const updated = await updatePipelineById(id, {
     ...(body.name && { name: body.name}),
@@ -63,7 +64,7 @@ export async function updatePipeline(id: string, body: UpdatePipelineBody) {
     updatedAt: new Date(),
   });
 
-  if(!updated) return null;
+  if(!updated) throw new Error("UPDATE_FAILED");
 
   if(body.subscribers){
     await deleteSubscriberByPipelineId(id);

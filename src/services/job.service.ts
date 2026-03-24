@@ -1,12 +1,13 @@
 import { findDeliveriesByJobId } from "../repositories/delivery.repository.js";
 import { findJobById } from "../repositories/job.repository.js";
+import { NotFoundError } from "../api/middleware/errors.js";
 import { Delivery, Job } from "../types/index.js";
 
-export async function getJobById(id: string): Promise<Job | null> {
+export async function getJobById(id: string): Promise<Job> {
   const job = await findJobById(id);
-  
+
   if(!job){
-    return null;
+    throw new NotFoundError("JOB_NOT_FOUND");
   }
 
   return{
@@ -21,7 +22,7 @@ export async function getJobDeliveries(JobId: string) {
   const job = await findJobById(JobId);
 
   if(!job){
-    throw new Error("JOB_NOT_FOUND");
+    throw new NotFoundError("JOB_NOT_FOUND");
   }
 
   const jobDeliveries = await findDeliveriesByJobId(job.id);

@@ -35,11 +35,10 @@ describe("getJobById", () => {
     expect(result?.payload).toEqual(mockJob.payload);
   });
 
-  it("should return null if the job is not found", async () => {
+  it("should throw NotFoundError if the job is not found", async () => {
     vi.spyOn(jobRepo, "findJobById").mockResolvedValue(null);
 
-    const result = await getJobById("non-existent-id");
-    expect(result).toBeNull();
+    await expect(getJobById("non-existent-id")).rejects.toThrow("JOB_NOT_FOUND");
   });
 });
 

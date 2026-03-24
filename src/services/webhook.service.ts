@@ -1,5 +1,6 @@
 import { insertJob } from "../repositories/job.repository.js";
 import { findPipelineBySourceId } from "../repositories/pipeline.repository.js";
+import { NotFoundError, ConflictError } from "../api/middleware/errors.js";
 import { Job } from "../types/index.js";
 
 export async function ingestWebhook(
@@ -9,11 +10,11 @@ export async function ingestWebhook(
   const pipeline = await findPipelineBySourceId(sourceId);
 
   if (!pipeline) {
-    throw new Error("PIPELINE_NOT_FOUND");
+    throw new NotFoundError("PIPELINE_NOT_FOUND");
   }
 
   if (pipeline.status !== "active") {
-    throw new Error('PIPELINE_PAUSED');
+    throw new ConflictError('PIPELINE_PAUSED');
   }
 
   const job = await insertJob({
