@@ -112,6 +112,22 @@ Response `202`:
 
 The webhook is queued immediately. Use the `jobId` to track processing.
 
+Requests must include a valid HMAC-SHA256 signature in the `X-Webhook-Signature` header:
+```
+X-Webhook-Signature: sha256=<hmac-sha256-of-body>
+```
+
+The signing secret is returned when the pipeline is created (`signingSecret` field). Generate the signature like this:
+```ts
+import { createHmac } from 'crypto';
+
+const signature = `sha256=${createHmac('sha256', signingSecret)
+  .update(JSON.stringify(body))
+  .digest('hex')}`;
+```
+
+Requests with missing or invalid signatures are rejected with `401`.
+
 ---
 
 ### Jobs
@@ -315,3 +331,11 @@ Tests are co-located with source files (`*.test.ts`). The test suite covers serv
 ## CI
 
 GitHub Actions runs on every push: type checking, linting, tests, and a Docker build verification. The pipeline must be green before merging to main.
+
+## Future improvements
+
+- **Rate limiting** — limit webhook ingestion per pipeline to prevent abuse
+- **Pipeline chaining** — use another pipeline's source URL as a subscriber
+- **Metrics** — expose Prometheus metrics for job processing rates and delivery success rates  
+- **Secret rotation** — dedicated endpoint to rotate a pipeline's signing secret
+- **Dashboard UI** — visual interface for managing pipelines and monitoring job status
