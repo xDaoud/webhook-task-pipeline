@@ -20,6 +20,7 @@ describe("createPipeline", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
   const mockSubscribers = [
     {
@@ -65,6 +66,23 @@ describe("createPipeline", () => {
     expect(typeof insertCall.sourceId).toBe("string");
   });
 
+  it("should generate a signingSecret automatically", async () => {
+    vi.spyOn(pipelineRepo, "insertPipeline").mockResolvedValue(mockPipeline);
+    vi.spyOn(subscriberRepo, "insertSubscribers").mockResolvedValue(
+      mockSubscribers,
+    );
+
+    await createPipeline({
+      name: "Test Pipeline",
+      actionType: "filter",
+      actionConfig: { keepFields: ["name"] },
+      subscribers: ["https://example.com/webhook"],
+    });
+
+    const insertCall = vi.mocked(pipelineRepo.insertPipeline).mock.calls[0][0];
+    expect(insertCall.signingSecret).toMatch(/^whsec_[0-9a-f]{64}$/);
+  });
+
   it("should throw if insertPipeline fails", async () => {
     vi.spyOn(pipelineRepo, "insertPipeline").mockRejectedValue(
       new Error("DB error"),
@@ -107,6 +125,7 @@ describe("getAllPipelines", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
 
   const secMockPipeline = {
@@ -118,6 +137,7 @@ describe("getAllPipelines", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
   const mockSubscribers = [
     {
@@ -167,6 +187,7 @@ describe("getPipelineById", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
 
   
@@ -204,6 +225,7 @@ describe("updatePipeline", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
 
   const mockInsertSubscribers = [
@@ -224,6 +246,7 @@ describe("updatePipeline", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
 
   it("should return an updated pipeline with subscribers and update the subscribers", async () => {
@@ -265,6 +288,7 @@ describe("deletePipeline", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
 
   it("should return false if pipeline does not exist", async () => {

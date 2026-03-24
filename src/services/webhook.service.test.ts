@@ -21,6 +21,7 @@ describe("ingestWebhook", () => {
     status: "active" as "active" | "paused",
     createdAt: new Date(),
     updatedAt: new Date(),
+    signingSecret: "whsec_abc123",
   };
   const mockJob = {
     id: "job-123",
