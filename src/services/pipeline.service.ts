@@ -3,11 +3,13 @@ import { PipelineWithSubscribers, CreatePipelineBody, ActionType, ActionConfig, 
 import { deletePipelineById, findAllPipelines, findPipelineById, insertPipeline, updatePipelineById } from '../repositories/pipeline.repository.js';
 import { deleteSubscriberByPipelineId, findSubscribersByPipelineIds, insertSubscribers } from '../repositories/subscriber.repository.js';
 import { NotFoundError } from '../api/middleware/errors.js';
+import { randomBytes } from 'crypto';
 
 export async function createPipeline(body: CreatePipelineBody): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({
     name: body.name,
     sourceId: uuidv4(),
+    signingSecret: `whsec_${randomBytes(32).toString('hex')}`,
     actionType: body.actionType,
     actionConfig: body.actionConfig as Record<string, unknown>,
   });

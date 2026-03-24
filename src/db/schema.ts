@@ -13,6 +13,7 @@ export const pipelines = pgTable('pipelines', {
   status: pipelineStatusEnum('status').notNull().default('active'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  signingSecret: text('signing_secret').notNull(),
 });
 
 export const subscribers = pgTable('subscribers', {

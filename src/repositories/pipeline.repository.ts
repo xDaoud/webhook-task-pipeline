@@ -6,7 +6,8 @@ export async function insertPipeline(data: {
     name: string,
     sourceId: string,
     actionType: string,
-    actionConfig: Record<string, unknown>
+    actionConfig: Record<string, unknown>,
+    signingSecret: string,
 }) {
     const result = await db.insert(pipelines).values(data).returning();
     return result[0];

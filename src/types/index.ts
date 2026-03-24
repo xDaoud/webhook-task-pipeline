@@ -11,6 +11,7 @@ export interface Pipeline {
   status: PipelineStatus;
   createdAt: Date;
   updatedAt: Date;
+  signingSecret: string;
 }
 
 export interface Subscriber {

@@ -1,0 +1,1 @@
+ALTER TABLE "pipelines" ADD COLUMN "signing_secret" text NOT NULL;
