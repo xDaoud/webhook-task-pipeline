@@ -1,4 +1,4 @@
-import { transformAction } from "./tranform.js";
+import { transformAction } from "./transform.js";
 import { describe, expect, it } from "vitest";
 
 describe("transform action", () => {

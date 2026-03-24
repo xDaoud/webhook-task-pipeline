@@ -1,6 +1,6 @@
 import { ActionConfig, ActionType, EnrichConfig, FilterConfig, TransformConfig } from "src/types/index.js";
 import { filterAction } from "./filter.js";
-import { transformAction } from "./tranform.js";
+import { transformAction } from "./transform.js";
 import { enrichAction } from "./enrich.js";
 
 export function runAction(
