@@ -1,10 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { ingestWebhook } from '../../services/webhook.service.js';
+import { verifySignature } from '../middleware/verifySignature.js';
 
 const router = Router();
 
 // POST /webhooks/:sourceId
-router.post('/:sourceId', async (req: Request<{ sourceId: string }>, res: Response, next: NextFunction) => {
+router.post('/:sourceId', verifySignature, async (req: Request<{ sourceId: string }>, res: Response, next: NextFunction) => {
   const { sourceId } = req.params;
   const payload = req.body;
 
