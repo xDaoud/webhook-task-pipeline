@@ -7,5 +7,5 @@ export function enrichAction(
   return {
     ...payload,
     ...config.addFields,
-  }
+  };
 }

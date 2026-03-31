@@ -1,6 +1,6 @@
-export type PipelineStatus = 'active' | 'paused';
-export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed';
-export type DeliveryStatus = 'pending' | 'success' | 'failed' | 'dead';
+export type PipelineStatus = "active" | "paused";
+export type JobStatus = "pending" | "processing" | "completed" | "failed";
+export type DeliveryStatus = "pending" | "success" | "failed" | "dead";
 
 export interface Pipeline {
   id: string;
@@ -46,7 +46,7 @@ export interface Delivery {
   nextRetryAt: Date | null;
 }
 
-export type ActionType = 'filter' | 'transform' | 'enrich';
+export type ActionType = "filter" | "transform" | "enrich";
 
 export interface FilterConfig {
   keepFields: string[];

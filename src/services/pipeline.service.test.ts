@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPipeline, deletePipeline, getAllPipelines, getPipelineById, updatePipeline } from "./pipeline.service.js";
+import {
+  createPipeline,
+  deletePipeline,
+  getAllPipelines,
+  getPipelineById,
+  updatePipeline,
+} from "./pipeline.service.js";
 import * as pipelineRepo from "../repositories/pipeline.repository.js";
 import * as subscriberRepo from "../repositories/subscriber.repository.js";
 
@@ -190,7 +196,6 @@ describe("getPipelineById", () => {
     signingSecret: "whsec_abc123",
   };
 
-  
   const mockSubscribers = [
     {
       id: "sub-1",
@@ -201,7 +206,9 @@ describe("getPipelineById", () => {
   ];
   it("should return a pipeline with subscribers", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
-    vi.spyOn(subscriberRepo, "findSubscribersByPipelineIds").mockResolvedValue(mockSubscribers);
+    vi.spyOn(subscriberRepo, "findSubscribersByPipelineIds").mockResolvedValue(
+      mockSubscribers,
+    );
     const result = await getPipelineById("pipeline-123");
     expect(result?.name).toBe("Test Pipeline");
     expect(result?.subscribers).toHaveLength(1);
@@ -211,7 +218,9 @@ describe("getPipelineById", () => {
   it("should throw NotFoundError if the pipeline is not found", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
 
-    await expect(getPipelineById("non-existent-id")).rejects.toThrow("PIPELINE_NOT_FOUND");
+    await expect(getPipelineById("non-existent-id")).rejects.toThrow(
+      "PIPELINE_NOT_FOUND",
+    );
   });
 });
 
@@ -251,10 +260,18 @@ describe("updatePipeline", () => {
 
   it("should return an updated pipeline with subscribers and update the subscribers", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
-    vi.spyOn(subscriberRepo, "findSubscribersByPipelineIds").mockResolvedValue(mockInsertSubscribers);
-    vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(mockUpdatePipeline);
-    vi.spyOn(subscriberRepo, "deleteSubscriberByPipelineId").mockResolvedValue(undefined);
-    vi.spyOn(subscriberRepo, "insertSubscribers").mockResolvedValue(mockInsertSubscribers);
+    vi.spyOn(subscriberRepo, "findSubscribersByPipelineIds").mockResolvedValue(
+      mockInsertSubscribers,
+    );
+    vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(
+      mockUpdatePipeline,
+    );
+    vi.spyOn(subscriberRepo, "deleteSubscriberByPipelineId").mockResolvedValue(
+      undefined,
+    );
+    vi.spyOn(subscriberRepo, "insertSubscribers").mockResolvedValue(
+      mockInsertSubscribers,
+    );
     const result = await updatePipeline("pipeline-123", {
       name: mockUpdatePipeline.name,
       subscribers: [mockInsertSubscribers[0].url],
@@ -265,16 +282,20 @@ describe("updatePipeline", () => {
   });
 
   it("should throw NotFoundError if pipeline does not exist", async () => {
-  vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
+    vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(null);
 
-  await expect(updatePipeline("non-existent-id", { name: "new name" })).rejects.toThrow("PIPELINE_NOT_FOUND");
-});
+    await expect(
+      updatePipeline("non-existent-id", { name: "new name" }),
+    ).rejects.toThrow("PIPELINE_NOT_FOUND");
+  });
 
   it("should throw if update fails", async () => {
     vi.spyOn(pipelineRepo, "findPipelineById").mockResolvedValue(mockPipeline);
     vi.spyOn(pipelineRepo, "updatePipelineById").mockResolvedValue(null);
 
-    await expect(updatePipeline("pipeline-123", { name: "new name" })).rejects.toThrow("UPDATE_FAILED");
+    await expect(
+      updatePipeline("pipeline-123", { name: "new name" }),
+    ).rejects.toThrow("UPDATE_FAILED");
   });
 });
 
@@ -292,18 +313,18 @@ describe("deletePipeline", () => {
   };
 
   it("should return false if pipeline does not exist", async () => {
-  vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(false);
+    vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(false);
 
-  const result = await deletePipeline("non-existent");
+    const result = await deletePipeline("non-existent");
 
-  expect(result).toBe(false);
+    expect(result).toBe(false);
   });
 
   it("should return true if pipeline does exist", async () => {
-  vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(true);
+    vi.spyOn(pipelineRepo, "deletePipelineById").mockResolvedValue(true);
 
-  const result = await deletePipeline(mockPipeline.id);
+    const result = await deletePipeline(mockPipeline.id);
 
-  expect(result).toBe(true);
+    expect(result).toBe(true);
   });
 });

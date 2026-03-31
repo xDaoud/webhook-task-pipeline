@@ -22,20 +22,31 @@ export async function insertDelivery(data: {
 }
 
 export async function findDeliveriesDueForRetry() {
-  return db.select().from(deliveries).where(
-    and(eq(deliveries.status, 'failed'),
-    lte(deliveries.nextRetryAt, new Date())
-    )
-  );
+  return db
+    .select()
+    .from(deliveries)
+    .where(
+      and(
+        eq(deliveries.status, "failed"),
+        lte(deliveries.nextRetryAt, new Date()),
+      ),
+    );
 }
 
-export async function updateDeliveryStatus(id: string, data: Partial<{
-  status: DeliveryStatus;
-  httpStatus: number;
-  error: string;
-  attemptedAt: Date;
-  nextRetryAt: Date;
-}>): Promise<typeof deliveries.$inferSelect | null> {
-  const result = await db.update(deliveries).set(data).where(eq(deliveries.id, id)).returning();
+export async function updateDeliveryStatus(
+  id: string,
+  data: Partial<{
+    status: DeliveryStatus;
+    httpStatus: number;
+    error: string;
+    attemptedAt: Date;
+    nextRetryAt: Date;
+  }>,
+): Promise<typeof deliveries.$inferSelect | null> {
+  const result = await db
+    .update(deliveries)
+    .set(data)
+    .where(eq(deliveries.id, id))
+    .returning();
   return result[0] ?? null;
 }

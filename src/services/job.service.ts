@@ -6,22 +6,22 @@ import { Delivery, Job } from "../types/index.js";
 export async function getJobById(id: string): Promise<Job> {
   const job = await findJobById(id);
 
-  if(!job){
+  if (!job) {
     throw new NotFoundError("JOB_NOT_FOUND");
   }
 
-  return{
+  return {
     ...job,
     payload: job.payload as Record<string, unknown>,
     result: job.result as Record<string, unknown> | null,
-    status: job.status as Job['status'],
+    status: job.status as Job["status"],
   };
 }
 
 export async function getJobDeliveries(JobId: string) {
   const job = await findJobById(JobId);
 
-  if(!job){
+  if (!job) {
     throw new NotFoundError("JOB_NOT_FOUND");
   }
 
@@ -29,6 +29,6 @@ export async function getJobDeliveries(JobId: string) {
 
   return jobDeliveries.map((delivery) => ({
     ...delivery,
-    status: delivery.status as Delivery['status'],
+    status: delivery.status as Delivery["status"],
   }));
 }

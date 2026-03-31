@@ -14,7 +14,7 @@ export async function ingestWebhook(
   }
 
   if (pipeline.status !== "active") {
-    throw new ConflictError('PIPELINE_PAUSED');
+    throw new ConflictError("PIPELINE_PAUSED");
   }
 
   const job = await insertJob({
@@ -26,6 +26,6 @@ export async function ingestWebhook(
     ...job,
     payload: job.payload as Record<string, unknown>,
     result: job.result as Record<string, unknown> | null,
-    status: job.status as Job['status'],
+    status: job.status as Job["status"],
   };
 }
