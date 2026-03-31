@@ -7,6 +7,13 @@ import {
   ValidationError,
 } from "./errors.js";
 
+/**
+ * Global Express error handler. Must have exactly 4 parameters so Express
+ * recognises it as an error-handling middleware (not a regular route handler).
+ *
+ * Known AppError subclasses are forwarded to the client with their HTTP status.
+ * Everything else becomes a generic 500 to avoid leaking internal details.
+ */
 export function errorHandler(
   error: Error,
   _req: Request,

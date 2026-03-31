@@ -21,12 +21,18 @@ import {
 import { NotFoundError } from "../api/middleware/errors.js";
 import { randomBytes } from "crypto";
 
+/**
+ * Creates a pipeline and its initial set of subscribers.
+ * Generates a unique sourceId (used in webhook URLs) and a signing secret automatically.
+ */
 export async function createPipeline(
   body: CreatePipelineBody,
 ): Promise<PipelineWithSubscribers> {
   const pipeline = await insertPipeline({
     name: body.name,
+    // sourceId is the public URL slug: POST /webhooks/:sourceId
     sourceId: uuidv4(),
+    // Prefixed with "whsec_" to make secrets easy to identify (similar to Stripe's convention)
     signingSecret: `whsec_${randomBytes(32).toString("hex")}`,
     actionType: body.actionType,
     actionConfig: body.actionConfig as Record<string, unknown>,
@@ -44,6 +50,10 @@ export async function createPipeline(
   };
 }
 
+/**
+ * Fetches all pipelines with their subscribers in exactly 2 queries.
+ * Subscribers are fetched in bulk and grouped in-memory to avoid an N+1 query per pipeline.
+ */
 export async function getAllPipelines(): Promise<PipelineWithSubscribers[]> {
   const allPipelines = await findAllPipelines();
 
@@ -59,6 +69,7 @@ export async function getAllPipelines(): Promise<PipelineWithSubscribers[]> {
   }));
 }
 
+/** Fetches a single pipeline with its subscribers. Throws NotFoundError if not found. */
 export async function getPipelineById(
   id: string,
 ): Promise<PipelineWithSubscribers> {
@@ -74,6 +85,10 @@ export async function getPipelineById(
   };
 }
 
+/**
+ * Partially updates a pipeline. Only provided fields are changed.
+ * If subscribers are provided, the existing list is fully replaced (delete + re-insert).
+ */
 export async function updatePipeline(id: string, body: UpdatePipelineBody) {
   const existing = await findPipelineById(id);
   if (!existing) throw new NotFoundError("PIPELINE_NOT_FOUND");
@@ -91,6 +106,7 @@ export async function updatePipeline(id: string, body: UpdatePipelineBody) {
   if (!updated) throw new Error("UPDATE_FAILED");
 
   if (body.subscribers) {
+    // Replace-all strategy: simpler than diffing, acceptable since subscriber lists are small
     await deleteSubscriberByPipelineId(id);
     await insertSubscribers(
       body.subscribers.map((url) => ({ pipelineId: id, url })),
@@ -107,6 +123,7 @@ export async function updatePipeline(id: string, body: UpdatePipelineBody) {
   };
 }
 
+/** Deletes a pipeline by ID. Returns true if deleted, false if not found. */
 export async function deletePipeline(id: string): Promise<boolean> {
   return deletePipelineById(id);
 }

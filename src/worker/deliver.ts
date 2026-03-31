@@ -5,14 +5,23 @@ export { handleFailedDelivery };
 
 const MAX_ATTEMPTS = 5;
 
+/**
+ * Calculates the next retry time using a stepped backoff schedule.
+ * Delays (in minutes) by attempt number: 1, 5, 30, 60, 180.
+ * Once all steps are exhausted, 180 minutes is used as the cap.
+ */
 export function getBackoffDelay(attemptNumber: number): Date {
-  const delays = [1, 5, 30, 60, 180]; //minutes
+  const delays = [1, 5, 30, 60, 180]; // minutes per attempt
   const minutes = delays[attemptNumber - 1] ?? 180;
   const nextRetryAt = new Date();
   nextRetryAt.setMinutes(nextRetryAt.getMinutes() + minutes);
   return nextRetryAt;
 }
 
+/**
+ * Delivers the job result to every subscriber registered for the pipeline.
+ * Each delivery is independent — a failure for one subscriber does not affect others.
+ */
 export async function deliverToSubscribers(
   jobId: string,
   pipelineId: string,
@@ -24,6 +33,7 @@ export async function deliverToSubscribers(
   }
 }
 
+/** Attempts a single HTTP POST delivery and records the outcome in the deliveries table. */
 async function deliverToSubscriber(
   jobId: string,
   subscriberId: string,
@@ -50,6 +60,7 @@ async function deliverToSubscriber(
         attemptedAt,
       });
     } else {
+      // Non-2xx response: treat as failure and schedule a retry
       await handleFailedDelivery(
         jobId,
         subscriberId,
@@ -59,6 +70,7 @@ async function deliverToSubscriber(
       );
     }
   } catch (error) {
+    // Network or timeout error
     const message = error instanceof Error ? error.message : "Unknown error";
     await handleFailedDelivery(
       jobId,
@@ -70,6 +82,11 @@ async function deliverToSubscriber(
   }
 }
 
+/**
+ * Records a failed delivery attempt.
+ * If MAX_ATTEMPTS is reached, the delivery is marked "dead" and no further retries are scheduled.
+ * Otherwise, nextRetryAt is set using the backoff schedule and the retry poller will pick it up.
+ */
 async function handleFailedDelivery(
   jobId: string,
   subscriberId: string,

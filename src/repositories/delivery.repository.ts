@@ -21,6 +21,11 @@ export async function insertDelivery(data: {
   return result[0];
 }
 
+/**
+ * Fetches all failed deliveries whose retry time has passed.
+ * The `deliveries_next_retry_at_idx` index makes this query efficient
+ * even with a large deliveries table.
+ */
 export async function findDeliveriesDueForRetry() {
   return db
     .select()

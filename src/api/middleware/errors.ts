@@ -1,3 +1,8 @@
+/**
+ * Base class for application-level errors that should be sent to the client.
+ * The errorHandler middleware checks instanceof AppError to distinguish these
+ * from unexpected runtime errors, which become generic 500 responses.
+ */
 export class AppError extends Error {
   constructor(
     public statusCode: number,

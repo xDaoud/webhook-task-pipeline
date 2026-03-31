@@ -3,7 +3,7 @@ import { getJobById, getJobDeliveries } from "../../services/job.service.js";
 
 const router = Router();
 
-// GET /jobs/:id
+// GET /jobs/:id — fetch a job's current status and result
 router.get(
   "/:id",
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
@@ -15,7 +15,8 @@ router.get(
     }
   },
 );
-// GET /jobs/:id/deliveries
+
+// GET /jobs/:id/deliveries — fetch the delivery audit log for a job
 router.get(
   "/:id/deliveries",
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {

@@ -1,5 +1,10 @@
 import { TransformConfig } from "src/types/index.js";
 
+/**
+ * Renames top-level payload keys according to `config.rename` ({ oldKey: newKey }).
+ * Keys not listed in the rename map are passed through unchanged.
+ * Keys listed in the map but absent from the payload are silently ignored.
+ */
 export function transformAction(
   payload: Record<string, unknown>,
   config: TransformConfig,

@@ -17,6 +17,18 @@ export async function findJobById(
   return result[0] ?? null;
 }
 
+/**
+ * Atomically claims the oldest pending job for processing.
+ *
+ * Uses `FOR UPDATE SKIP LOCKED` so that multiple worker instances can poll
+ * concurrently without competing: each worker skips rows already locked by
+ * another, preventing duplicate processing without any application-level locking.
+ *
+ * The UPDATE and SELECT happen in a single statement to avoid a race between
+ * finding a job and marking it as processing.
+ *
+ * Returns null when the queue is empty.
+ */
 export async function claimNextJob(): Promise<typeof jobs.$inferSelect | null> {
   const result = await db.execute(sql`
         UPDATE jobs
@@ -33,6 +45,7 @@ export async function claimNextJob(): Promise<typeof jobs.$inferSelect | null> {
   const row = result.rows[0];
   if (!row) return null;
 
+  // Raw SQL results use snake_case column names; map them back to camelCase
   return {
     id: row.id,
     pipelineId: row.pipeline_id,

@@ -3,6 +3,15 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { findPipelineBySourceId } from "../../repositories/pipeline.repository.js";
 import { NotFoundError, UnauthorizedError } from "./errors.js";
 
+/**
+ * Express middleware that authenticates incoming webhooks via HMAC-SHA256.
+ *
+ * The sender must include an `X-Webhook-Signature` header of the form:
+ *   sha256=<hex(hmac-sha256(signingSecret, JSON.stringify(body)))>
+ *
+ * `timingSafeEqual` is used for the comparison to prevent timing attacks
+ * that could reveal the expected signature via response-time differences.
+ */
 export async function verifySignature(
   req: Request<{ sourceId: string }>,
   _res: Response,
@@ -30,6 +39,7 @@ export async function verifySignature(
     const sigBuffer = Buffer.from(signature);
     const expectedBuffer = Buffer.from(expected);
 
+    // Buffers must be the same length before timingSafeEqual or it throws
     if (
       sigBuffer.length !== expectedBuffer.length ||
       !timingSafeEqual(sigBuffer, expectedBuffer)

@@ -12,9 +12,14 @@ const pool = new Pool({
   connectionTimeoutMillis: 5_000,
 });
 
+/**
+ * Verifies the database is reachable before the app starts accepting traffic.
+ * Retries with a fixed delay to handle slow container startup ordering in Docker Compose.
+ */
 async function connectWithRetry(retries = 5, delay = 3000): Promise<void> {
   for (let i = 0; i < retries; i++) {
     try {
+      // Borrow and immediately return a connection to confirm the pool can reach the DB
       const client = await pool.connect();
       client.release();
       console.log("Database connected successfully");

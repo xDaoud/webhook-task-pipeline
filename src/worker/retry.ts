@@ -8,6 +8,10 @@ import { getBackoffDelay } from "./deliver.js";
 
 const MAX_ATTEMPTS = 5;
 
+/**
+ * Fetches all deliveries due for retry and attempts each one.
+ * Called by the retry poller loop every 30 seconds.
+ */
 export async function processFailedDeliveries() {
   const dueDeliveries = await findDeliveriesDueForRetry();
 
@@ -16,6 +20,11 @@ export async function processFailedDeliveries() {
   }
 }
 
+/**
+ * Retries a single failed delivery.
+ * Looks up the job result and subscriber URL, then re-POSTs to the subscriber.
+ * Silently skips if the job or subscriber was deleted since the original attempt.
+ */
 async function retryDelivery(delivery: {
   id: string;
   jobId: string;
@@ -28,6 +37,7 @@ async function retryDelivery(delivery: {
   const subscriber = await findSubscribersByIds([delivery.subscriberId]);
   if (!subscriber?.length) return;
 
+  // result is null if the job never completed successfully; nothing to redeliver
   const result = job.result as Record<string, unknown>;
   if (!result) return;
 
@@ -64,6 +74,11 @@ async function retryDelivery(delivery: {
   }
 }
 
+/**
+ * Records a failed retry attempt.
+ * Mirrors the logic in deliver.ts: dead-letters at MAX_ATTEMPTS, otherwise schedules
+ * the next retry using the shared backoff schedule from getBackoffDelay.
+ */
 async function handleRetryFailure(
   delivery: { jobId: string; subscriberId: string },
   attemptNumber: number,

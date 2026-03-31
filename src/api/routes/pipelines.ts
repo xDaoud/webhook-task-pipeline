@@ -10,7 +10,7 @@ import { CreatePipelineBody, UpdatePipelineBody } from "../../types/index.js";
 
 const router = Router();
 
-// POST   /pipelines
+// POST /pipelines — create a new pipeline with at least one subscriber
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   const body: CreatePipelineBody = req.body;
 
@@ -31,7 +31,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
-// GET    /pipelines
+
+// GET /pipelines — list all pipelines with their subscribers
 router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const allPipelines = await getAllPipelines();
@@ -40,7 +41,8 @@ router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
-// GET    /pipelines/:id
+
+// GET /pipelines/:id — fetch a single pipeline with its subscribers
 router.get(
   "/:id",
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
@@ -52,7 +54,8 @@ router.get(
     }
   },
 );
-// PATCH  /pipelines/:id
+
+// PATCH /pipelines/:id — partial update; providing subscribers replaces the full list
 router.patch(
   "/:id",
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
@@ -65,7 +68,8 @@ router.patch(
     }
   },
 );
-// DELETE /pipelines/:id
+
+// DELETE /pipelines/:id — cascades to subscribers, jobs, and deliveries at the DB level
 router.delete(
   "/:id",
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
